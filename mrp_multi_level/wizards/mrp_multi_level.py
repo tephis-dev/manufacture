@@ -772,7 +772,7 @@ class MultiLevelMrp(models.TransientModel):
         mrp_dates = set(moves_dates + action_dates)
         on_hand_qty = product_mrp_area.product_id.with_context(
             location=product_mrp_area.mrp_area_id.location_id.id
-        )._compute_quantities_dict(False, False, False)[product_mrp_area.product_id.id][
+        )._compute_quantities_dict(None, None, None)[product_mrp_area.product_id.id][
             "qty_available"
         ]
         running_availability = on_hand_qty
