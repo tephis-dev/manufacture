@@ -175,9 +175,18 @@ class ProductMRPArea(models.Model):
 
     def _compute_qty_available(self):
         for rec in self:
-            rec.qty_available = rec.product_id.with_context(
-                location=rec.mrp_area_id.location_id.id
-            ).qty_available
+            if rec.mrp_area_id.location_id.warehouse_id.name != "Europa":
+                rec.qty_available = rec.product_id.with_context(
+                    location=rec.mrp_area_id.location_id.id
+                ).qty_available
+                """This is also patched for PLM location"""
+            else:
+                plm_location = self.env["stock.location"].search([('name', '=', 'PLM')])
+                rec.qty_available = rec.product_id.with_context(
+                    location=rec.mrp_area_id.location_id.id
+                ).qty_available + rec.product_id.with_context(
+                    location=plm_location.id
+                ).qty_available
 
     def _compute_supply_method(self):
         group_obj = self.env["procurement.group"]

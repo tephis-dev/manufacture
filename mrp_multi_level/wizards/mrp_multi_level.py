@@ -338,8 +338,8 @@ class MultiLevelMrp(models.TransientModel):
         llc_recursion_limit = (
             int(
                 self.env["ir.config_parameter"]
-                .sudo()
-                .get_param("mrp_multi_level.llc_calculation_recursion_limit")
+                    .sudo()
+                    .get_param("mrp_multi_level.llc_calculation_recursion_limit")
             )
             or 1000
         )
@@ -540,14 +540,14 @@ class MultiLevelMrp(models.TransientModel):
             if (
                 last_date
                 and (
-                    fields.Date.from_string(move.mrp_date)
-                    >= last_date + timedelta(days=grouping_delta)
-                )
+                fields.Date.from_string(move.mrp_date)
+                >= last_date + timedelta(days=grouping_delta)
+            )
                 and (
-                    (onhand + last_qty + move.mrp_qty)
-                    < product_mrp_area.mrp_minimum_stock
-                    or (onhand + last_qty) < product_mrp_area.mrp_minimum_stock
-                )
+                (onhand + last_qty + move.mrp_qty)
+                < product_mrp_area.mrp_minimum_stock
+                or (onhand + last_qty) < product_mrp_area.mrp_minimum_stock
+            )
             ):
                 name = _(
                     "Grouped Demand of %(product_name)s for %(delta_days)d Days"
@@ -775,6 +775,13 @@ class MultiLevelMrp(models.TransientModel):
         )._compute_quantities_dict(None, None, None)[product_mrp_area.product_id.id][
             "qty_available"
         ]
+        """This is a patch to get quantities in PLM"""
+        if product_mrp_area.mrp_area_id.location_id.warehouse_id.name == "Europa":
+            plm_location = self.env["stock.location"].search([('name', '=', 'PLM')])
+            on_hand_qty += product_mrp_area.product_id.with_context(
+                location=plm_location.id)._compute_quantities_dict(None, None, None)[product_mrp_area.product_id.id][
+                "qty_available"
+            ]
         running_availability = on_hand_qty
         mrp_inventory_vals = []
         for mdt in sorted(mrp_dates):
