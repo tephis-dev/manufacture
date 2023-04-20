@@ -109,7 +109,6 @@
                         <page
                             name="mrp_moves"
                             string="MRP Moves"
-                            groups="base.group_no_one"
                         >
                             <field name="mrp_move_ids" nolabel="1">
                                 <tree>
@@ -130,7 +129,6 @@
                         <page
                             name="planned_orders"
                             string="Planned Orders"
-                            groups="base.group_no_one"
                         >
                             <field name="planned_order_ids" nolabel="1">
                                 <tree>
